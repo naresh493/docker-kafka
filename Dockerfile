@@ -8,7 +8,7 @@ MAINTAINER Maxime Petazzoni <max@signalfuse.com>
 RUN wget -q -O - https://dist.apache.org/repos/dist/release/kafka/kafka_2.8.0-0.8.0-beta1.tgz \
   | tar -C /opt -xz
 
-ADD run.sh /opt/kafka_2.8.0-0.8.0-beta1/.docker/
+ADD run.py /opt/kafka_2.8.0-0.8.0-beta1/.docker/
 
 WORKDIR /opt/kafka_2.8.0-0.8.0-beta1
-CMD ["/opt/kafka_2.8.0-0.8.0-beta1/.docker/run.sh"]
+CMD ["python", "/opt/kafka_2.8.0-0.8.0-beta1/.docker/run.py"]
