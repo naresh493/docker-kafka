@@ -14,31 +14,33 @@ os.chdir(os.path.join(
     '..'))
 
 KAFKA_CONFIG_FILE = 'config/server.properties'
-KAFKA_CONFIG_TEMPLATE = """
+KAFKA_CONFIG_TEMPLATE = """# Kafka configuration
 broker.id=%(broker_id)d
 port=%(broker_port)d
 
 num.network.threads=2
 num.io.threads=2
+
 socket.send.buffer.bytes=1048576
 socket.receive.buffer.bytes=1048576
 socket.request.max.bytes=104857600
 
+log.dir=%(data_dir)s/logs
 num.partitions=1
-log.dir=%(data_dir)s
+
 log.flush.interval.messages=10000
 log.flush.interval.ms=100
 log.retention.hours=168
 log.segment.bytes=536870912
 log.cleanup.interval.mins=1
 
-kafka.csv.metrics.reporter.enabled=false
-kafka.csv.metrics.dir=%(data_dir)s/.metrics/
-kafka.metrics.polling.interval.secs=5
-kafka.metrics.reporters=kafka.metrics.KafkaCSVMetricsReporter
-
 zookeeper.connect=%(zookeeper_nodes)s
 zookeeper.connection.timeout=1000000
+
+kafka.metrics.polling.interval.secs=5
+kafka.metrics.reporters=kafka.metrics.KafkaCSVMetricsReporter
+kafka.csv.metrics.dir=%(data_dir)s/metrics/
+kafka.csv.metrics.reporter.enabled=false
 """
 
 # Environment variables driving the Kafka configuration and their defaults.
