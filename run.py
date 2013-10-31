@@ -16,6 +16,7 @@ os.chdir(os.path.join(
 KAFKA_CONFIG_FILE = 'config/server.properties'
 KAFKA_CONFIG_TEMPLATE = """# Kafka configuration
 broker.id=%(broker_id)d
+advertised.host.name=%(host_address)s
 port=%(broker_port)d
 
 num.network.threads=2
@@ -49,6 +50,12 @@ KAFKA_CONFIG_BROKER_ID = int(os.environ.get('KAFKA_CONFIG_BROKER_ID', 0))
 KAFKA_CONFIG_BROKER_PORT = int(os.environ.get('KAFKA_CONFIG_BROKER_PORT', 9092))
 KAFKA_CONFIG_ZOOKEEPER_BASE = os.environ.get('KAFKA_CONFIG_ZOOKEEPER_BASE', '')
 
+# Get the container's host address. Required for ZooKeeper-based discovery.
+CONTAINER_HOST_ADDRESS = os.environ.get('CONTAINER_HOST_ADDRESS', '')
+if not CONTAINER_HOST_ADDRESS:
+    sys.stderr.write('Container\'s host address is required for Kafka discovery!\n')
+    sys.exit(1)
+
 # ZooKeeper node list, required. Comma-separated list of the ZooKeeper nodes,
 # as host:port definitions. If defined, the KAFKA_CONFIG_ZOOKEEPER_BASE will be
 # appended to each of them for zNode chroot.
@@ -64,9 +71,10 @@ ZOOKEEPER_NODES = ['%s%s' % (node, KAFKA_CONFIG_ZOOKEEPER_BASE)
 with open(KAFKA_CONFIG_FILE, 'w+') as conf:
     conf.write(KAFKA_CONFIG_TEMPLATE % {
         'broker_id': KAFKA_CONFIG_BROKER_ID,
+        'host_address': CONTAINER_HOST_ADDRESS,
         'broker_port': KAFKA_CONFIG_BROKER_PORT,
         'data_dir': KAFKA_CONFIG_DATA_DIR,
-        'zookeeper_nodes': ','.join(ZOOKEEPER_NODES)
+        'zookeeper_nodes': ','.join(ZOOKEEPER_NODES),
     })
 
 print 'Kafka will connect to ZooKeeper at', ', '.join(ZOOKEEPER_NODES)

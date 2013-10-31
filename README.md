@@ -15,6 +15,9 @@ Environment variables
 The following environment variables are understood by the startup script to
 seed the service's configuration:
 
+  - `CONTAINER_HOST_ADDRESS` should contain the address of the Docker
+    container's host. It' used by Kafka as the address advertised to ZooKeeper
+    for broker discovery and is required for the container to start;
   - `ZOOKEEPER_NODE_LIST` is a comma-separated list of `host:port`
     definitions that define, in order, *all* the nodes of the ZooKeeper
     cluster that Kafka is to use. Each host will be placed, followed by the
@@ -36,7 +39,7 @@ Usage
 To build a new image, simply run from this directory:
 
 ```
-$ docker build -t `whoami`/kafka:0.8.0-beta1 .
+$ docker build -t `whoami`/kafka .
 ```
 
 The Docker image will be built and now available in Docker to start a new
@@ -44,5 +47,5 @@ container from:
 
 ```
 $ docker images | grep kafka
-mpetazzoni/kafka       0.8.0-beta1         6c58d1f6ff3c        5 seconds ago       12.29 kB (virtual 900.1 MB)
+mpetazzoni/kafka       latest         6c58d1f6ff3c        5 seconds ago       12.29 kB (virtual 900.1 MB)
 ```
