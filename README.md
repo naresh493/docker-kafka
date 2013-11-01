@@ -26,12 +26,18 @@ seed the service's configuration:
   - `KAFKA_CONFIG_ZOOKEEPER_BASE`, the ZooKeeper tree chroot for Kafka to use
     in the `zookeeper.connect` string and properly namespace the Kafka zNodes
     for this deployment. Defaults to `/local/kafka/central`;
-  - `KAFKA_CONFIG_DATA_DIR`, which controls the `data.dir` configuration
-    setting. Defaults to `/var/lib/kafka`;
   - `KAFKA_CONFIG_BROKER_PORT`, which controls which port the Kafka broker will
     listen on. Defaults to 9092;
   - `KAFKA_CONFIG_BROKER_ID`, which controls the `broker.id` configuration
     setting and useful for multi-node Kafka clusters. Defaults to 0.
+
+Volumes
+-------
+
+The Kafka image uses the following volumes you may want to bind from the
+container's host:
+
+  - `/var/lib/kafka`, where the Kafka logs will be stored for each topic.
 
 Usage
 -----

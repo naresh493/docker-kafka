@@ -3,8 +3,7 @@
 # Start script for the Kafka service.
 #
 # This is where service configuration before starting the Kafka broker can be
-# performed, if needed, for example to configure the Kafka broker ID and data
-# path locations in the configuration file.
+# performed, if needed, for example to configure the Kafka broker ID or port.
 
 import os
 import sys
@@ -26,7 +25,7 @@ socket.send.buffer.bytes=1048576
 socket.receive.buffer.bytes=1048576
 socket.request.max.bytes=104857600
 
-log.dir=%(data_dir)s/logs
+log.dir=/var/lib/kafka/logs
 num.partitions=1
 
 log.flush.interval.messages=10000
@@ -40,12 +39,11 @@ zookeeper.connection.timeout=1000000
 
 kafka.metrics.polling.interval.secs=5
 kafka.metrics.reporters=kafka.metrics.KafkaCSVMetricsReporter
-kafka.csv.metrics.dir=%(data_dir)s/metrics/
+kafka.csv.metrics.dir=/var/lib/kafka/metrics/
 kafka.csv.metrics.reporter.enabled=false
 """
 
 # Environment variables driving the Kafka configuration and their defaults.
-KAFKA_CONFIG_DATA_DIR = os.environ.get('KAFKA_CONFIG_DATA_DIR', '/var/lib/kafka')
 KAFKA_CONFIG_BROKER_ID = int(os.environ.get('KAFKA_CONFIG_BROKER_ID', 0))
 KAFKA_CONFIG_BROKER_PORT = int(os.environ.get('KAFKA_CONFIG_BROKER_PORT', 9092))
 KAFKA_CONFIG_ZOOKEEPER_BASE = os.environ.get('KAFKA_CONFIG_ZOOKEEPER_BASE', '')
@@ -73,7 +71,6 @@ with open(KAFKA_CONFIG_FILE, 'w+') as conf:
         'broker_id': KAFKA_CONFIG_BROKER_ID,
         'host_address': CONTAINER_HOST_ADDRESS,
         'broker_port': KAFKA_CONFIG_BROKER_PORT,
-        'data_dir': KAFKA_CONFIG_DATA_DIR,
         'zookeeper_nodes': ','.join(ZOOKEEPER_NODES),
     })
 

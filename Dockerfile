@@ -14,4 +14,5 @@ RUN cd /opt/kafka && ./sbt assembly-package-dependency
 ADD run.py /opt/kafka/.docker/
 
 WORKDIR /opt/kafka
+VOLUME /var/lib/kafka
 CMD ["python", "/opt/kafka/.docker/run.py"]
