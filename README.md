@@ -15,21 +15,28 @@ Environment variables
 The following environment variables are understood by the startup script to
 seed the service's configuration:
 
+  - `CONTAINER_NAME` should contain the logical name of the container,
+    which will be used for looking up links and ports informations from the
+    other environment variables. For this, the name is uppercased and
+    non-alphanumeric characters are replaced by underscores;
   - `CONTAINER_HOST_ADDRESS` should contain the address of the Docker
     container's host. It' used by Kafka as the address advertised to ZooKeeper
     for broker discovery and is required for the container to start;
-  - `ZOOKEEPER_NODE_LIST` is a comma-separated list of `host:port`
-    definitions that define, in order, *all* the nodes of the ZooKeeper
-    cluster that Kafka is to use. Each host will be placed, followed by the
-    `KAFKA_CONFIG_ZOOKEEPER_BASE` chroot path, in the `zookeeper.connect`
-    configuration variable;
+
   - `KAFKA_CONFIG_ZOOKEEPER_BASE`, the ZooKeeper tree chroot for Kafka to use
     in the `zookeeper.connect` string and properly namespace the Kafka zNodes
     for this deployment. Defaults to `/local/kafka/central`;
-  - `KAFKA_CONFIG_BROKER_PORT`, which controls which port the Kafka broker will
-    listen on. Defaults to 9092;
   - `KAFKA_CONFIG_BROKER_ID`, which controls the `broker.id` configuration
     setting and useful for multi-node Kafka clusters. Defaults to 0.
+  - `KAFKA_<NAME>_BROKER_PORT`, which controls which port the Kafka broker will
+    listen on. Defaults to 9092;
+
+Kafka depends on ZooKeeper for discovery. It thus expects the following
+environment variables to be defined for each ZooKeeper node to construct the
+node list: `ZOOKEEPER_<ZK_NODE_NAME>_HOST` and
+`ZOOKEEPER_<ZK_NODE_NAME>_CLIENT_PORT`. The `KAFKA_CONFIG_ZOOKEEPER_BASE` will
+be append to each `host:port` to set the zNode path chroot. The resulting list
+is used for the `zookeeper.connect` configuration setting.
 
 Volumes
 -------
