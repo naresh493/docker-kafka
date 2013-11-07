@@ -1,13 +1,22 @@
 #!/usr/bin/env python
 
-# Start script for the Kafka service.
-#
-# This is where service configuration before starting the Kafka broker can be
-# performed, if needed, for example to configure the Kafka broker ID or port.
+# Copyright (C) 2013 SignalFuse, Inc.
 
+# Start script for the Kafka service.
+# Requires kazoo, a pure-Python ZooKeeper client.
+
+from kazoo.client import KazooClient
+import logging
 import os
 import re
 import sys
+
+if __name__ != '__main__':
+    sys.stderr.write('This script is only meant to be executed.\n')
+    sys.exit(1)
+
+# Setup logging for Kazoo.
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 os.chdir(os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
@@ -15,10 +24,12 @@ os.chdir(os.path.join(
 
 KAFKA_CONFIG_FILE = 'config/server.properties'
 
+# Get container/instance name.
 CONTAINER_NAME = os.environ.get('CONTAINER_NAME', '')
 assert CONTAINER_NAME, 'Container name is missing!'
 KAFKA_CONFIG_BASE = re.sub(r'[^\w]', '_', CONTAINER_NAME).upper()
 
+# Get container's host IP address/hostname.
 CONTAINER_HOST_ADDRESS = os.environ.get('CONTAINER_HOST_ADDRESS', '')
 assert CONTAINER_HOST_ADDRESS, 'Container host address is required for Kafka discovery!'
 
@@ -77,6 +88,17 @@ kafka.csv.metrics.reporter.enabled=false
 
 print 'Kafka will connect to ZooKeeper at %s%s' % \
         (', '.join(ZOOKEEPER_NODE_LIST), KAFKA_CONFIG_ZOOKEEPER_BASE)
+
+print 'Ensuring existance of the ZooKeeper zNode chroot path %s...' % \
+        KAFKA_CONFIG_ZOOKEEPER_BASE
+# Connect to the ZooKeeper nodes. Use a pretty large timeout in case they were
+# just started. We should wait for them for a little while.
+zk = KazooClient(hosts=','.join(ZOOKEEPER_NODE_LIST), timeout=15000)
+try:
+    zk.start()
+    zk.ensure_path(KAFKA_CONFIG_ZOOKEEPER_BASE)
+finally:
+    zk.stop()
 
 # Start the Kafka broker.
 os.execl('bin/kafka-server-start.sh', 'kafka', KAFKA_CONFIG_FILE)
