@@ -91,14 +91,25 @@ print 'Kafka will connect to ZooKeeper at %s%s' % \
 
 print 'Ensuring existance of the ZooKeeper zNode chroot path %s...' % \
         KAFKA_CONFIG_ZOOKEEPER_BASE
-# Connect to the ZooKeeper nodes. Use a pretty large timeout in case they were
-# just started. We should wait for them for a little while.
-zk = KazooClient(hosts=','.join(ZOOKEEPER_NODE_LIST), timeout=15000)
-try:
-    zk.start()
-    zk.ensure_path(KAFKA_CONFIG_ZOOKEEPER_BASE)
-finally:
-    zk.stop()
+def ensure_kafka_zk_path(retries=3):
+    while retries >= 0:
+        # Connect to the ZooKeeper nodes. Use a pretty large timeout in case they were
+        # just started. We should wait for them for a little while.
+        zk = KazooClient(hosts=','.join(ZOOKEEPER_NODE_LIST), timeout=30000)
+        try:
+            zk.start()
+            zk.ensure_path(KAFKA_CONFIG_ZOOKEEPER_BASE)
+            return True
+        except:
+            retries -= 1
+        finally:
+            zk.stop()
+
+    return False
+
+if not ensure_kafka_zk_path():
+    sys.stderr.write('Could not create the base ZooKeeper path for Kafka!\n')
+    sys.exit(1)
 
 # Start the Kafka broker.
 os.execl('bin/kafka-server-start.sh', 'kafka', KAFKA_CONFIG_FILE)
