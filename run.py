@@ -27,16 +27,16 @@ KAFKA_CONFIG_FILE = 'config/server.properties'
 # Get container/instance name.
 CONTAINER_NAME = os.environ.get('CONTAINER_NAME', '')
 assert CONTAINER_NAME, 'Container name is missing!'
-KAFKA_CONFIG_BASE = re.sub(r'[^\w]', '_', CONTAINER_NAME).upper()
+CONFIG_BASE = re.sub(r'[^\w]', '_', CONTAINER_NAME).upper()
 
 # Get container's host IP address/hostname.
 CONTAINER_HOST_ADDRESS = os.environ.get('CONTAINER_HOST_ADDRESS', '')
 assert CONTAINER_HOST_ADDRESS, 'Container host address is required for Kafka discovery!'
 
 # Environment variables driving the Kafka configuration and their defaults.
-KAFKA_CONFIG_BROKER_ID = int(os.environ.get('KAFKA_CONFIG_BROKER_ID', 0))
-KAFKA_CONFIG_BROKER_PORT = int(os.environ.get('KAFKA_%s_BROKER_PORT' % KAFKA_CONFIG_BASE, 9092))
-KAFKA_CONFIG_ZOOKEEPER_BASE = os.environ.get('KAFKA_CONFIG_ZOOKEEPER_BASE', '')
+KAFKA_BROKER_ID = int(os.environ.get('KAFKA_BROKER_ID', 0))
+KAFKA_BROKER_PORT = int(os.environ.get('KAFKA_{}_BROKER_PORT'.format(CONFIG_BASE), 9092))
+KAFKA_ZOOKEEPER_BASE = os.environ.get('KAFKA_ZOOKEEPER_BASE', '')
 
 # Build ZooKeeper node list with zNode path chroot.
 ZOOKEEPER_NODE_LIST = []
@@ -79,18 +79,18 @@ kafka.csv.metrics.dir=/var/lib/kafka/metrics/
 kafka.csv.metrics.reporter.enabled=false
 """ % {
         'node_name': CONTAINER_NAME,
-        'broker_id': KAFKA_CONFIG_BROKER_ID,
+        'broker_id': KAFKA_BROKER_ID,
         'host_address': CONTAINER_HOST_ADDRESS,
-        'broker_port': KAFKA_CONFIG_BROKER_PORT,
+        'broker_port': KAFKA_BROKER_PORT,
         'zookeeper_nodes': ','.join(ZOOKEEPER_NODE_LIST),
-        'zookeeper_base': KAFKA_CONFIG_ZOOKEEPER_BASE,
+        'zookeeper_base': KAFKA_ZOOKEEPER_BASE,
     })
 
 print 'Kafka will connect to ZooKeeper at %s%s' % \
-        (', '.join(ZOOKEEPER_NODE_LIST), KAFKA_CONFIG_ZOOKEEPER_BASE)
+        (', '.join(ZOOKEEPER_NODE_LIST), KAFKA_ZOOKEEPER_BASE)
 
 print 'Ensuring existance of the ZooKeeper zNode chroot path %s...' % \
-        KAFKA_CONFIG_ZOOKEEPER_BASE
+        KAFKA_ZOOKEEPER_BASE
 def ensure_kafka_zk_path(retries=3):
     while retries >= 0:
         # Connect to the ZooKeeper nodes. Use a pretty large timeout in case they were
@@ -98,7 +98,7 @@ def ensure_kafka_zk_path(retries=3):
         zk = KazooClient(hosts=','.join(ZOOKEEPER_NODE_LIST), timeout=30000)
         try:
             zk.start()
-            zk.ensure_path(KAFKA_CONFIG_ZOOKEEPER_BASE)
+            zk.ensure_path(KAFKA_ZOOKEEPER_BASE)
             return True
         except:
             retries -= 1
