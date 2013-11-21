@@ -15,6 +15,8 @@ Environment variables
 The following environment variables are understood by the startup script to
 seed the service's configuration:
 
+  - `SERVICE_NAME` should contain the logical name of the service this
+    container is an instance of;
   - `CONTAINER_NAME` should contain the logical name of the container,
     which will be used for looking up links and ports informations from the
     other environment variables. For this, the name is uppercased and
@@ -23,20 +25,20 @@ seed the service's configuration:
     container's host. It' used by Kafka as the address advertised to ZooKeeper
     for broker discovery and is required for the container to start;
 
-  - `KAFKA_CONFIG_ZOOKEEPER_BASE`, the ZooKeeper tree chroot for Kafka to use
-    in the `zookeeper.connect` string and properly namespace the Kafka zNodes
-    for this deployment. Defaults to `/local/kafka/central`;
-  - `KAFKA_CONFIG_BROKER_ID`, which controls the `broker.id` configuration
-    setting and useful for multi-node Kafka clusters. Defaults to 0.
-  - `KAFKA_<NAME>_BROKER_PORT`, which controls which port the Kafka broker will
-    listen on. Defaults to 9092;
+  - `ZOOKEEPER_BASE`, the ZooKeeper tree chroot for Kafka to use in the
+    `zookeeper.connect` string and properly namespace the Kafka zNodes
+    for this deployment. Defaults to `/local/kafka`;
+  - `BROKER_ID`, which controls the `broker.id` configuration setting
+    and useful for multi-node Kafka clusters. Defaults to 0.
+  - `<SERVICE_NAME>_<CONTAINER_NAME>_BROKER_PORT`, which controls which
+    port the Kafka broker will listen on. Defaults to 9092;
 
 Kafka depends on ZooKeeper for discovery. It thus expects the following
 environment variables to be defined for each ZooKeeper node to construct the
 node list: `ZOOKEEPER_<ZK_NODE_NAME>_HOST` and
-`ZOOKEEPER_<ZK_NODE_NAME>_CLIENT_PORT`. The `KAFKA_CONFIG_ZOOKEEPER_BASE` will
-be append to each `host:port` to set the zNode path chroot. The resulting list
-is used for the `zookeeper.connect` configuration setting.
+`ZOOKEEPER_<ZK_NODE_NAME>_CLIENT_PORT`. The `ZOOKEEPER_BASE` will be
+append to each `host:port` to set the zNode path chroot. The resulting
+list is used for the `zookeeper.connect` configuration setting.
 
 Volumes
 -------

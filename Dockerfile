@@ -1,13 +1,14 @@
 # Dockerfile for Kafka
 
-FROM mpetazzoni/sf-base
+FROM mpetazzoni/maestro-base
 
 MAINTAINER Maxime Petazzoni <max@signalfuse.com>
 
-# Get Python ZooKeeper
+# Get Python ZooKeeper and Maestro for guest utils
 RUN apt-get update
-RUN apt-get -y install python-pip python-dev
+RUN apt-get -y install python-pip python-dev python-setuptools
 RUN pip install kazoo
+RUN easy_install http://github.com/signalfuse/maestro-ng/archive/master.zip
 
 # Get latest available release of Kafka (no stable release yet).
 RUN mkdir -p /opt
