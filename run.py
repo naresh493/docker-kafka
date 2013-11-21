@@ -21,7 +21,8 @@ os.chdir(os.path.join(
     '..'))
 
 KAFKA_CONFIG_FILE = os.path.join('config', 'server.properties')
-KAFKA_ZOOKEEPER_BASE = os.environ.get('ZOOKEEPER_BASE', '/local/kafka')
+KAFKA_ZOOKEEPER_BASE = os.environ.get('ZOOKEEPER_BASE',
+                                      '/{}/kafka'.format(get_environment_name()))
 ZOOKEEPER_NODE_LIST = ','.join(get_node_list('zookeeper', ports=['client']))
 
 # Generate the Kafka configuration from the defined environment variables.

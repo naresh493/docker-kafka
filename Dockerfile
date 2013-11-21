@@ -8,7 +8,7 @@ MAINTAINER Maxime Petazzoni <max@signalfuse.com>
 RUN apt-get update
 RUN apt-get -y install python-pip python-dev python-setuptools
 RUN pip install kazoo
-RUN easy_install http://github.com/signalfuse/maestro-ng/archive/master.zip
+RUN easy_install http://github.com/signalfuse/maestro-ng/archive/maestro-0.1.0.zip
 
 # Get latest available release of Kafka (no stable release yet).
 RUN mkdir -p /opt
