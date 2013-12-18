@@ -19,6 +19,7 @@ RUN cd /opt/kafka && ./sbt update
 RUN cd /opt/kafka && ./sbt package
 RUN cd /opt/kafka && ./sbt assembly-package-dependency
 
+ADD jmxagent.jar /opt/kafka/lib/
 ADD run.py /opt/kafka/.docker/
 
 WORKDIR /opt/kafka

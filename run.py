@@ -85,5 +85,12 @@ if not ensure_kafka_zk_path():
     sys.stderr.write('Could not create the base ZooKeeper path for Kafka!\n')
     sys.exit(1)
 
+# Setup the JMX Java agent.
+os.environ['KAFKA_OPTS'] = ' '.join([
+    '-javaagent:lib/jmxagent.jar',
+    '-Dsf.jmxagent.port={}'.format(get_port('jmx', -1)),
+    '-Djava.rmi.server.hostname={}'.format(get_container_host_address()),
+])
+
 # Start the Kafka broker.
 os.execl('bin/kafka-server-start.sh', 'kafka', KAFKA_CONFIG_FILE)
