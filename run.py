@@ -44,7 +44,7 @@ num.partitions=1
 
 log.flush.interval.messages=10000
 log.flush.interval.ms=100
-log.retention.hours=168
+log.retention.hours=%(retention_hours)d
 log.segment.bytes=536870912
 log.cleanup.interval.mins=1
 
@@ -60,6 +60,7 @@ kafka.csv.metrics.reporter.enabled=false
         'broker_id': int(os.environ.get('BROKER_ID', 0)),
         'host_address': get_container_host_address(),
         'broker_port': get_port('broker', 9092),
+        'retention_hours': int(os.environ.get('RETENTION_HOURS', 168)),
         'zookeeper_nodes': ZOOKEEPER_NODE_LIST,
         'zookeeper_base': KAFKA_ZOOKEEPER_BASE,
     })
