@@ -13,8 +13,9 @@ RUN easy_install http://github.com/signalfuse/maestro-ng/archive/maestro-0.1.4.z
 # Get latest available release of Kafka (no stable release yet).
 RUN mkdir -p /opt
 RUN git clone https://github.com/apache/kafka.git /opt/kafka
-# Checkout "blessed" commit from trunk (we need KAFKA-1092)
-RUN cd /opt/kafka && git checkout -b blessed a55ec0620f6ce805fafe2e1d4035ec3e0ab4e0d0
+# Checkout "blessed" commit from trunk (we need KAFKA-1092 and KAFKA-1112)
+# (KAFKA-1092 was a55ec0620f6ce805fafe2e1d4035ec3e0ab4e0d0)
+RUN cd /opt/kafka && git checkout -b blessed 855340a2e65ffbb79520c49d0b9a231b94acd538
 RUN cd /opt/kafka && ./sbt update
 RUN cd /opt/kafka && ./sbt package
 RUN cd /opt/kafka && ./sbt assembly-package-dependency
