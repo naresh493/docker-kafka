@@ -8,10 +8,10 @@
 from kazoo.client import KazooClient
 import logging
 import os
-import re
 import sys
 
 from maestro.guestutils import *
+from maestro.extensions.logging.logstash import run_service
 
 # Setup logging for Kazoo.
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -86,12 +86,19 @@ if not ensure_kafka_zk_path():
     sys.stderr.write('Could not create the base ZooKeeper path for Kafka!\n')
     sys.exit(1)
 
-# Setup the JMX Java agent.
+# Setup the JMX Java agent and various JVM options.
 os.environ['KAFKA_OPTS'] = ' '.join([
+    '-server',
+    '-showversion',
     '-javaagent:lib/jmxagent.jar',
     '-Dsf.jmxagent.port={}'.format(get_port('jmx', -1)),
     '-Djava.rmi.server.hostname={}'.format(get_container_host_address()),
+    os.environ.get('JVM_OPTS', ''),
 ])
 
 # Start the Kafka broker.
-os.execl('bin/kafka-server-start.sh', 'kafka', KAFKA_CONFIG_FILE)
+run_service(['bin/kafka-server-start.sh', KAFKA_CONFIG_FILE],
+# TODO(mpetazzoni): use logtype with next version of Maestro.
+#        logtype='kafka',
+        logbase='/var/log/kafka',
+        logtarget='logstash')

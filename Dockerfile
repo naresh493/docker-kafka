@@ -1,14 +1,14 @@
 # Dockerfile for Kafka
 
-FROM mpetazzoni/maestro-base
-
+FROM quay.io/signalfuse/maestro-base:0.1.6
 MAINTAINER Maxime Petazzoni <max@signalfuse.com>
 
-# Get Python ZooKeeper and Maestro for guest utils
+ENV DEBIAN_FRONTEND noninteractive
+
+# Get Python ZooKeeper (Kazoo)
 RUN apt-get update
-RUN apt-get -y install python-pip python-dev python-setuptools
+RUN apt-get -y install python-pip
 RUN pip install kazoo
-RUN easy_install http://github.com/signalfuse/maestro-ng/archive/maestro-0.1.4.zip
 
 # Get latest available release of Kafka (no stable release yet).
 RUN mkdir -p /opt
@@ -25,4 +25,5 @@ ADD run.py /opt/kafka/.docker/
 
 WORKDIR /opt/kafka
 VOLUME /var/lib/kafka
+VOLUME /var/log/kafka
 CMD ["python", "/opt/kafka/.docker/run.py"]
