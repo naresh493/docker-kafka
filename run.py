@@ -40,7 +40,7 @@ socket.receive.buffer.bytes=1048576
 socket.request.max.bytes=104857600
 
 log.dir=/var/lib/kafka/logs
-num.partitions=1
+num.partitions=%(num_partitions)d
 
 log.flush.interval.messages=10000
 log.flush.interval.ms=100
@@ -60,6 +60,7 @@ kafka.csv.metrics.reporter.enabled=false
         'broker_id': int(os.environ.get('BROKER_ID', 0)),
         'host_address': get_container_host_address(),
         'broker_port': get_port('broker', 9092),
+        'num_partitions': int(os.environ.get('NUM_PARTITIONS', 8)),
         'retention_hours': int(os.environ.get('RETENTION_HOURS', 168)),
         'zookeeper_nodes': ZOOKEEPER_NODE_LIST,
         'zookeeper_base': KAFKA_ZOOKEEPER_BASE,
