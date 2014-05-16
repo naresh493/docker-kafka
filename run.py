@@ -11,7 +11,6 @@ import os
 import sys
 
 from maestro.guestutils import *
-from maestro.extensions.logging.logstash import run_service
 
 # Setup logging for Kazoo.
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -21,8 +20,12 @@ os.chdir(os.path.join(
     '..'))
 
 KAFKA_CONFIG_FILE = os.path.join('config', 'server.properties')
+KAFKA_LOGGING_CONFIG = os.path.join('config', 'log4j.properties')
 KAFKA_ZOOKEEPER_BASE = os.environ.get('ZOOKEEPER_BASE',
                                       '/{}/kafka'.format(get_environment_name()))
+
+LOG_PATTERN = "%d{yyyy'-'MM'-'dd'T'HH:mm:ss.SSS} %-5p [%-35.35t] [%-36.36c]: %m%n"
+
 ZOOKEEPER_NODE_LIST = ','.join(get_node_list('zookeeper', ports=['client']))
 
 # Generate the Kafka configuration from the defined environment variables.
@@ -66,6 +69,20 @@ kafka.csv.metrics.reporter.enabled=false
         'zookeeper_base': KAFKA_ZOOKEEPER_BASE,
     })
 
+# Setup the logging configuration.
+with open(KAFKA_LOGGING_CONFIG, 'w+') as f:
+    f.write("""# Log4j configuration, logs to rotating file
+log4j.rootLogger=INFO,R
+
+log4j.appender.R=org.apache.log4j.RollingFileAppender
+log4j.appender.R.File=/var/log/%s/%s.log
+log4j.appender.R.maxFileSize=100MB
+log4j.appender.R.maxBackupIndex=10
+log4j.appender.R.layout=org.apache.log4j.PatternLayout
+log4j.appender.R.layout.ConversionPattern=%s
+""" % (get_service_name(), get_container_name(), LOG_PATTERN))
+
+# Ensure the existence of the ZooKeeper root node for Kafka
 print 'Ensuring existance of the ZooKeeper zNode chroot path %s...' % \
         KAFKA_ZOOKEEPER_BASE
 def ensure_kafka_zk_path(retries=3):
@@ -99,8 +116,4 @@ os.environ['KAFKA_OPTS'] = ' '.join([
 ])
 
 # Start the Kafka broker.
-run_service(['bin/kafka-server-start.sh', KAFKA_CONFIG_FILE],
-# TODO(mpetazzoni): use logtype with next version of Maestro.
-#        logtype='kafka',
-        logbase='/var/log/kafka',
-        logtarget='logstash')
+os.execl('bin/kafka-server-start.sh', 'kafka', KAFKA_CONFIG_FILE)
