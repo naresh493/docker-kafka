@@ -24,7 +24,7 @@ KAFKA_LOGGING_CONFIG = os.path.join('config', 'log4j.properties')
 KAFKA_ZOOKEEPER_BASE = os.environ.get('ZOOKEEPER_BASE',
                                       '/{}/kafka'.format(get_environment_name()))
 
-LOG_PATTERN = "%d{yyyy'-'MM'-'dd'T'HH:mm:ss.SSS} %-5p [%-35.35t] [%-36.36c]: %m%n"
+LOG_PATTERN = "%d{yyyy'-'MM'-'dd'T'HH:mm:ss.SSSXXX} %-5p [%-35.35t] [%-36.36c]: %m%n"
 
 ZOOKEEPER_NODE_LIST = ','.join(get_node_list('zookeeper', ports=['client']))
 
