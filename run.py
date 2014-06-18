@@ -105,15 +105,26 @@ if not ensure_kafka_zk_path():
     sys.exit(1)
 
 # Setup the JMX Java agent and various JVM options.
-os.environ['KAFKA_OPTS'] = ' '.join([
+jvm_opts = [
     '-server',
     '-showversion',
-    '-javaagent:lib/jmxagent.jar',
-    '-Dsf.jmxagent.port={}'.format(get_port('jmx', -1)),
-    '-Djava.rmi.server.hostname={}'.format(get_container_host_address()),
-    '-Dvisualvm.display.name="{}/{}"'.format(get_environment_name(), get_container_name()),
-    os.environ.get('JVM_OPTS', ''),
-])
+    '-Dvisualvm.display.name="{}/{}"'.format(
+        get_environment_name(), get_container_name()),
+]
+
+jmx_port = get_port('jmx', -1)
+if jmx_port != -1:
+    os.environ['JMX_PORT'] = str(jmx_port)
+    jvm_opts += [
+        '-Djava.rmi.server.hostname={}'.format(get_container_host_address()),
+        '-Dcom.sun.management.jmxremote.port={}'.format(jmx_port),
+        '-Dcom.sun.management.jmxremote.rmi.port={}'.format(jmx_port),
+        '-Dcom.sun.management.jmxremote.authenticate=false',
+        '-Dcom.sun.management.jmxremote.local.only=false',
+        '-Dcom.sun.management.jmxremote.ssl=false',
+    ]
+
+os.environ['KAFKA_OPTS'] = ' '.join(jvm_opts) + os.environ.get('JVM_OPTS', '')
 
 # Start the Kafka broker.
 os.execl('bin/kafka-server-start.sh', 'kafka', KAFKA_CONFIG_FILE)

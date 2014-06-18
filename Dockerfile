@@ -6,7 +6,6 @@ MAINTAINER Maxime Petazzoni <max@signalfuse.com>
 ENV DEBIAN_FRONTEND noninteractive
 
 # Get Python ZooKeeper (Kazoo)
-RUN apt-get update
 RUN apt-get -y install python-pip
 RUN pip install kazoo
 
@@ -20,10 +19,7 @@ RUN cd /opt/kafka && ./sbt update
 RUN cd /opt/kafka && ./sbt package
 RUN cd /opt/kafka && ./sbt assembly-package-dependency
 
-ADD jmxagent.jar /opt/kafka/lib/
 ADD run.py /opt/kafka/.docker/
 
 WORKDIR /opt/kafka
-VOLUME /var/lib/kafka
-VOLUME /var/log/kafka
 CMD ["python", "/opt/kafka/.docker/run.py"]
