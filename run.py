@@ -52,7 +52,8 @@ log.segment.bytes=536870912
 log.cleanup.interval.mins=1
 
 zookeeper.connect=%(zookeeper_nodes)s%(zookeeper_base)s
-zookeeper.connection.timeout=1000000
+zookeeper.connection.timeout.ms=300000
+zookeeper.session.timeout.ms=10000
 
 kafka.metrics.polling.interval.secs=5
 kafka.metrics.reporters=kafka.metrics.KafkaCSVMetricsReporter
