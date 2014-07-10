@@ -55,9 +55,12 @@ log.retention.bytes=%(retention_bytes)d
 log.segment.bytes=536870912
 log.cleanup.interval.mins=1
 
+default.replication.factor=%(replication_factor)d
+
 zookeeper.connect=%(zookeeper_nodes)s%(zookeeper_base)s
-zookeeper.connection.timeout.ms=300000
-zookeeper.session.timeout.ms=10000
+zookeeper.connection.timeout.ms=6000
+zookeeper.session.timeout.ms=6000
+zookeeper.sync.time.ms=2000
 
 kafka.metrics.polling.interval.secs=5
 kafka.metrics.reporters=kafka.metrics.KafkaCSVMetricsReporter
@@ -76,6 +79,7 @@ log4j.appender.R.layout=org.apache.log4j.PatternLayout
 log4j.appender.R.layout.ConversionPattern=%(log_pattern)s
 """
 
+replication = min(int(os.environ.get("REPLICATION", 2)), len(get_node_list('kafka')))
 # Generate the Kafka configuration from the defined environment variables.
 config_model = {
     'node_name': get_container_name(),
@@ -94,7 +98,9 @@ config_model = {
     'flush_interval_ms': int(os.environ.get('FLUSH_INTERVAL_MS', 10000)),
     'flush_interval_msgs': int(os.environ.get('FLUSH_INTERVAL_MSGS', 10000)),
     'num_threads': int(os.environ.get('NUM_THREADS', 8)),
+    'replication_factor': replication,
 }
+
 with open(KAFKA_CONFIG_FILE, 'w+') as conf:
     conf.write(KAFKA_CONFIG_TEMPLATE % config_model)
 
