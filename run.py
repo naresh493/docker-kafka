@@ -56,6 +56,15 @@ log.segment.bytes=536870912
 log.cleanup.interval.mins=1
 
 default.replication.factor=%(replication_factor)d
+num.replica.fetchers=%(num_replica_fetchers)d
+replica.fetch.max.bytes=1048576
+replica.fetch.wait.max.ms=500
+replica.high.watermark.checkpoint.interval.ms=5000
+replica.socket.timeout.ms=%(replica_socket_timeout_ms)d
+replica.socket.receive.buffer.bytes=65536
+
+replica.lag.time.max.ms=%(replica_lag_max_ms)d
+replica.lag.max.messages=%(replica_lag_max_msgs)d
 
 zookeeper.connect=%(zookeeper_nodes)s%(zookeeper_base)s
 zookeeper.connection.timeout.ms=6000
@@ -99,6 +108,10 @@ config_model = {
     'flush_interval_msgs': int(os.environ.get('FLUSH_INTERVAL_MSGS', 10000)),
     'num_threads': int(os.environ.get('NUM_THREADS', 8)),
     'replication_factor': replication,
+    'num_replica_fetchers': int(os.environ.get('NUM_REPLICA_FETCHERS', 4)),
+    'replica_socket_timeout_ms': int(os.environ.get('REPLICA_SOCKET_TIMEOUT_MS', 2500)),
+    'replica_lag_max_ms': int(os.environ.get('REPLICA_LAG_MAX_MS', 5000)),
+    'replica_lag_max_msgs': int(os.environ.get('REPLICA_LAG_MAX_MSGS', 1000)),
 }
 
 with open(KAFKA_CONFIG_FILE, 'w+') as conf:
