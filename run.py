@@ -66,6 +66,8 @@ replica.socket.receive.buffer.bytes=65536
 replica.lag.time.max.ms=%(replica_lag_max_ms)d
 replica.lag.max.messages=%(replica_lag_max_msgs)d
 
+auto.leader.rebalance.enable=%(leader_rebalance)s
+
 zookeeper.connect=%(zookeeper_nodes)s%(zookeeper_base)s
 zookeeper.connection.timeout.ms=6000
 zookeeper.session.timeout.ms=6000
@@ -112,6 +114,7 @@ config_model = {
     'replica_socket_timeout_ms': int(os.environ.get('REPLICA_SOCKET_TIMEOUT_MS', 2500)),
     'replica_lag_max_ms': int(os.environ.get('REPLICA_LAG_MAX_MS', 5000)),
     'replica_lag_max_msgs': int(os.environ.get('REPLICA_LAG_MAX_MSGS', 1000)),
+    'leader_rebalance': str(os.environ.get('AUTO_LEADER_REBALANCE', 'false').lower() == 'true').lower()
 }
 
 with open(KAFKA_CONFIG_FILE, 'w+') as conf:
