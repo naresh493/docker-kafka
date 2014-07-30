@@ -67,6 +67,7 @@ replica.lag.time.max.ms=%(replica_lag_max_ms)d
 replica.lag.max.messages=%(replica_lag_max_msgs)d
 
 auto.leader.rebalance.enable=%(leader_rebalance)s
+controlled.shutdown.enable=true
 
 zookeeper.connect=%(zookeeper_nodes)s%(zookeeper_base)s
 zookeeper.connection.timeout.ms=6000
