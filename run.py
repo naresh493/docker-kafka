@@ -52,7 +52,8 @@ log.flush.interval.messages=%(flush_interval_msgs)s
 log.flush.interval.ms=%(flush_interval_ms)d
 log.retention.hours=%(retention_hours)d
 log.retention.bytes=%(retention_bytes)d
-log.segment.bytes=536870912
+log.segment.bytes=%(log_segment_bytes)d
+log.roll.hours=%(log_roll_hours)d
 log.cleanup.interval.mins=1
 
 default.replication.factor=%(replication_factor)d
@@ -105,6 +106,10 @@ config_model = {
     'retention_hours': int(os.environ.get('RETENTION_HOURS', 168)),
     # Default retention is only based on time.
     'retention_bytes': int(os.environ.get('RETENTION_BYTES', -1)),
+    # Segment size (default is 0.5GB)
+    'log_segment_bytes': int(os.environ.get('LOG_SEGMENT_BYTES', 536870912)),
+    # Minimum interval between rolling new log segments (default 1 week)
+    'log_roll_hours': int(os.environ.get('LOG_ROLL_HOURS', 24 * 7)),
     'zookeeper_nodes': ZOOKEEPER_NODE_LIST,
     'zookeeper_base': KAFKA_ZOOKEEPER_BASE,
     'flush_interval_ms': int(os.environ.get('FLUSH_INTERVAL_MS', 10000)),
