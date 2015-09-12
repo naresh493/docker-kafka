@@ -1,6 +1,6 @@
 # Dockerfile for Kafka
 
-FROM quay.io/signalfuse/maestro-base:15.04-0.2.6
+FROM quay.io/signalfuse/maestro-base:15.04-0.2.6.2
 MAINTAINER Maxime Petazzoni <max@signalfx.com>
 
 ENV DEBIAN_FRONTEND noninteractive
