@@ -179,7 +179,7 @@ if jmx_port != -1:
         '-Dcom.sun.management.jmxremote.ssl=false',
     ]
 
-os.environ['KAFKA_OPTS'] = ' '.join(jvm_opts) + os.environ.get('JVM_OPTS', '')
+os.environ['KAFKA_OPTS'] = ' '.join(jvm_opts) + ' ' + os.environ.get('JVM_OPTS', '')
 
 # Start the Kafka broker.
 os.execl('bin/kafka-server-start.sh', 'kafka', KAFKA_CONFIG_FILE)
