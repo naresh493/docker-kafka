@@ -21,15 +21,16 @@ RUN mkdir -p /opt/gradle-${GRADLE_VERSION} \
   && rm "gradle-${GRADLE_VERSION}-bin.zip"
 ENV PATH=$PATH:/opt/gradle-${GRADLE_VERSION}/gradle/bin
 
+ADD build.patch /opt/
+
 # Get Kafka 0.8.2.1 but cherry-pick the commit that uses zk client 0.5 since it
 # is supposed to fix some bugs.
 RUN mkdir -p /opt \
   && git clone https://github.com/apache/kafka.git /opt/kafka \
   && cd /opt/kafka \
-  && git checkout -b blessed tags/0.8.2.1 \
-  && git cherry-pick 41ba26273b497e4cbcc947c742ff6831b7320152 \
+  && git checkout 0.9.0 \
+  && git am < /opt/build.patch \
   && gradle \
-  && sed -i "s/gradle-2\.0/gradle-${GRADLE_VERSION}/" gradle/wrapper/gradle-wrapper.properties \
   && ./gradlew jar
 
 ADD run.py /opt/kafka/.docker/
