@@ -34,6 +34,8 @@ LOG_PATTERN = "%d{yyyy'-'MM'-'dd'T'HH:mm:ss.SSSXXX} %-5p [%-35.35t] [%-36.36c]: 
 
 ZOOKEEPER_NODE_LIST = ','.join(get_node_list('zookeeper', ports=['client']))
 
+KAFKA_SERVICE_NAME = os.environ.get('KAFKA_SERVICE', 'kafka')
+
 KAFKA_CONFIG_TEMPLATE = """# Kafka configuration for %(node_name)s
 broker.id=%(broker_id)d
 advertised.host.name=%(host_address)s
@@ -95,7 +97,7 @@ log4j.appender.R.layout=org.apache.log4j.PatternLayout
 log4j.appender.R.layout.ConversionPattern=%(log_pattern)s
 """
 
-replication = min(int(os.environ.get("REPLICATION", 2)), len(get_node_list('kafka')))
+replication = min(int(os.environ.get("REPLICATION", 2)), len(get_node_list(KAFKA_SERVICE_NAME)))
 # Generate the Kafka configuration from the defined environment variables.
 config_model = {
     'node_name': get_container_name(),
@@ -186,4 +188,4 @@ if jmx_port != -1:
 os.environ['KAFKA_OPTS'] = ' '.join(jvm_opts) + ' ' + os.environ.get('JVM_OPTS', '')
 
 # Start the Kafka broker.
-os.execl('bin/kafka-server-start.sh', 'kafka', KAFKA_CONFIG_FILE)
+os.execl('bin/kafka-server-start.sh', KAFKA_SERVICE_NAME, KAFKA_CONFIG_FILE)
