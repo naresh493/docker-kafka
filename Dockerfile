@@ -23,12 +23,11 @@ ENV PATH=$PATH:/opt/gradle-${GRADLE_VERSION}/gradle/bin
 
 ADD build.patch /opt/
 
-# Get Kafka 0.8.2.1 but cherry-pick the commit that uses zk client 0.5 since it
-# is supposed to fix some bugs.
+# Get Kafka 0.9.0.1
 RUN mkdir -p /opt \
   && git clone https://github.com/apache/kafka.git /opt/kafka \
   && cd /opt/kafka \
-  && git checkout 0.9.0 \
+  && git checkout tags/0.9.0.1 \
   && git am < /opt/build.patch \
   && gradle \
   && ./gradlew jar
