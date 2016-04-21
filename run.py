@@ -84,6 +84,8 @@ kafka.csv.metrics.dir=/var/lib/kafka/metrics/
 kafka.csv.metrics.reporter.enabled=false
 
 inter.broker.protocol.version=%(kafka_protocol_version)s
+
+delete.topic.enable=true
 """
 
 KAFKA_LOGGING_TEMPLATE = """# Log4j configuration, logs to rotating file
