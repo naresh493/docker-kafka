@@ -1,6 +1,6 @@
 # Dockerfile for Kafka
 
-FROM quay.io/signalfuse/maestro-base:alp-3.2-jdk8
+FROM quay.io/signalfuse/maestro-base:alp-3.4-jdk8
 MAINTAINER Maxime Petazzoni <max@signalfx.com>
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -15,7 +15,7 @@ RUN git config --global user.email "max@signalfx.com" \
 ENV GRADLE_VERSION 2.6
 RUN mkdir -p /opt/gradle-${GRADLE_VERSION} \
   && cd /opt/gradle-${GRADLE_VERSION} \
-  && wget "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
+  && curl -jkssL "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" -o gradle-${GRADLE_VERSION}-bin.zip \
   && unzip "gradle-${GRADLE_VERSION}-bin.zip" \
   && ln -s "gradle-${GRADLE_VERSION}" gradle \
   && rm "gradle-${GRADLE_VERSION}-bin.zip"
