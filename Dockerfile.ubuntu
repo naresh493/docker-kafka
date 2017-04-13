@@ -1,7 +1,7 @@
-# Dockerfile for Alpine-based Kafka
+# Dockerfile for Ubuntu-based Kafka
 
-FROM quay.io/signalfuse/maestro-base:alp-3.4-jdk8
-MAINTAINER Maxime Petazzoni <max@signalfx.com>
+FROM quay.io/signalfuse/maestro-base:ubuntu-16.10-jdk8
+MAINTAINER Janet Yu <jwy@signalfx.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 

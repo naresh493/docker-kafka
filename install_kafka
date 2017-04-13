@@ -1,0 +1,32 @@
+#!/bin/sh
+
+set -e
+set -x
+
+# Get Python ZooKeeper (Kazoo)
+pip install kazoo
+
+# Git user config for cherry-pick to work
+git config --global user.email "max@signalfx.com"
+git config --global user.name "Maxime Petazzoni"
+
+# Gradle - required to build kafka
+export GRADLE_VERSION=2.6
+mkdir -p /opt/gradle-${GRADLE_VERSION}
+cd /opt/gradle-${GRADLE_VERSION}
+curl -jkssL "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" -o gradle-${GRADLE_VERSION}-bin.zip
+unzip "gradle-${GRADLE_VERSION}-bin.zip"
+ln -s "gradle-${GRADLE_VERSION}" gradle
+rm "gradle-${GRADLE_VERSION}-bin.zip"
+
+# Get Kafka 0.8.2.1 but cherry-pick the commit that uses zk client 0.5 since it
+# is supposed to fix some bugs.
+export PATH=$PATH:/opt/gradle-${GRADLE_VERSION}/gradle/bin
+mkdir -p /opt
+git clone https://github.com/apache/kafka.git /opt/kafka
+cd /opt/kafka
+git checkout -b blessed tags/0.8.2.1
+git cherry-pick 41ba26273b497e4cbcc947c742ff6831b7320152
+gradle
+sed -i "s/gradle-2\.0/gradle-${GRADLE_VERSION}/" gradle/wrapper/gradle-wrapper.properties
+./gradlew jar
