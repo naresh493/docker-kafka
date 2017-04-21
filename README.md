@@ -1,13 +1,16 @@
 Kafka on Docker
 ===============
 
-This `Dockerfile` creates a Docker image that can be used as the base for
-running Kafka within a Docker container. The Kafka service is ran by the run.sh
-script which is in charge of setting up the Kafka configuration from
+`Dockerfile` creates an Alpine Linux-based Docker image that can be used as the
+base for running Kafka within a Docker container. The Kafka service is ran by
+the run.sh script which is in charge of setting up the Kafka configuration from
 environment variables passed to the container when it is run.
 
 The version of Kafka is defined in the `Dockerfile` and currently points at the
 last available beta release.
+
+Similarly, `Dockerfile.ubuntu` creates an Ubuntu-based Docker image that can be
+used as the Kafka base.
 
 Environment variables
 ---------------------
