@@ -9,9 +9,6 @@ environment variables passed to the container when it is run.
 The version of Kafka is defined in the `Dockerfile` and currently points at the
 last available beta release.
 
-Similarly, `Dockerfile.ubuntu` creates an Ubuntu-based Docker image that can be
-used as the Kafka base.
-
 Environment variables
 ---------------------
 
