@@ -24,6 +24,8 @@ seed the service's configuration:
   - `CONTAINER_HOST_ADDRESS` should contain the address of the Docker
     container's host. It' used by Kafka as the address advertised to ZooKeeper
     for broker discovery and is required for the container to start;
+  - `KAFKA_PROTOCOL_VERSION` should contain the Kafka protocol version to use;
+  - `KAFKA_LOG_VERSION` should contain the Kafka log message version to use;
 
   - `ZOOKEEPER_BASE`, the ZooKeeper tree chroot for Kafka to use in the
     `zookeeper.connect` string and properly namespace the Kafka zNodes
