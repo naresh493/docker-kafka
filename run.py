@@ -28,7 +28,8 @@ KAFKA_CONFIG_FILE = os.path.join('config', 'server.properties')
 KAFKA_LOGGING_CONFIG = os.path.join('config', 'log4j.properties')
 KAFKA_ZOOKEEPER_BASE = os.environ.get('ZOOKEEPER_BASE',
                                       '/{}/kafka'.format(get_environment_name()))
-KAFKA_PROTOCOL_VERSION = os.environ.get('KAFKA_PROTOCOL_VERSION', '0.8.2.X')
+KAFKA_PROTOCOL_VERSION = os.environ['KAFKA_PROTOCOL_VERSION']
+KAFKA_LOG_VERSION = os.environ['KAFKA_LOG_VERSION']
 
 LOG_PATTERN = "%d{yyyy'-'MM'-'dd'T'HH:mm:ss.SSSXXX} %-5p [%-35.35t] [%-36.36c]: %m%n"
 
@@ -84,6 +85,7 @@ kafka.csv.metrics.dir=/var/lib/kafka/metrics/
 kafka.csv.metrics.reporter.enabled=false
 
 inter.broker.protocol.version=%(kafka_protocol_version)s
+log.message.format.version=%(kafka_log_version)s
 
 delete.topic.enable=true
 """
@@ -119,6 +121,7 @@ config_model = {
     'log_roll_hours': int(os.environ.get('LOG_ROLL_HOURS', 24 * 7)),
     'zookeeper_nodes': ZOOKEEPER_NODE_LIST,
     'zookeeper_base': KAFKA_ZOOKEEPER_BASE,
+    'kafka_log_version': KAFKA_LOG_VERSION,
     'kafka_protocol_version': KAFKA_PROTOCOL_VERSION,
     'flush_interval_ms': int(os.environ.get('FLUSH_INTERVAL_MS', 10000)),
     'flush_interval_msgs': int(os.environ.get('FLUSH_INTERVAL_MSGS', 10000)),

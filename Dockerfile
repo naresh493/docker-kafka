@@ -11,7 +11,8 @@ RUN pip install kazoo
 ENV KAFKA_VERSION 0.10.2.0
 RUN wget https://apache.osuosl.org/kafka/${KAFKA_VERSION}/kafka_2.10-${KAFKA_VERSION}.tgz -O /tmp/kafka_2.10-{KAFKA_VERSION}.tgz \
     && tar xfz /tmp/kafka_2.10-{KAFKA_VERSION}.tgz -C /opt \
-    && rm /tmp/kafka_2.10-{KAFKA_VERSION}.tgz
+    && rm /tmp/kafka_2.10-{KAFKA_VERSION}.tgz \
+    && ln -s /opt/kafka_2.10-${KAFKA_VERSION} /opt/kafka
 
 ADD run.py /opt/kafka/.docker/
 
