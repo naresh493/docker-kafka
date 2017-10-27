@@ -7,9 +7,9 @@ ENV DEBIAN_FRONTEND noninteractive
 # Get Python ZooKeeper (Kazoo)
 RUN pip install kazoo
 
-# Get Kafka 0.10.2.0
-ENV KAFKA_VERSION 0.10.2.0
-RUN wget https://apache.osuosl.org/kafka/${KAFKA_VERSION}/kafka_2.10-${KAFKA_VERSION}.tgz -O /tmp/kafka_2.10-{KAFKA_VERSION}.tgz \
+# Get Kafka 0.10.2.1
+ENV KAFKA_VERSION 0.10.2.1
+RUN curl -s https://apache.osuosl.org/kafka/${KAFKA_VERSION}/kafka_2.10-${KAFKA_VERSION}.tgz > /tmp/kafka_2.10-{KAFKA_VERSION}.tgz \
     && tar xfz /tmp/kafka_2.10-{KAFKA_VERSION}.tgz -C /opt \
     && rm /tmp/kafka_2.10-{KAFKA_VERSION}.tgz
 
