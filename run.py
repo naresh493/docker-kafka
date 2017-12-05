@@ -29,6 +29,7 @@ KAFKA_LOGGING_CONFIG = os.path.join('config', 'log4j.properties')
 KAFKA_ZOOKEEPER_BASE = os.environ.get('ZOOKEEPER_BASE',
                                       '/{}/kafka'.format(get_environment_name()))
 KAFKA_PROTOCOL_VERSION = os.environ.get('KAFKA_PROTOCOL_VERSION', '0.8.2.X')
+KAFKA_LOG_VERSION = os.environ.get('KAFKA_LOG_VERSION', '')
 
 LOG_PATTERN = "%d{yyyy'-'MM'-'dd'T'HH:mm:ss.SSSXXX} %-5p [%-35.35t] [%-36.36c]: %m%n"
 
@@ -87,6 +88,7 @@ kafka.csv.metrics.reporter.enabled=false
 inter.broker.protocol.version=%(kafka_protocol_version)s
 
 delete.topic.enable=true
+offsets.topic.replication.factor=%(offsets.topic.replication.factor)s
 """
 
 KAFKA_LOGGING_TEMPLATE = """# Log4j configuration, logs to rotating file
@@ -135,11 +137,14 @@ config_model = {
     'replica_socket_timeout_ms': int(os.environ.get('REPLICA_SOCKET_TIMEOUT_MS', 2500)),
     'replica_lag_max_ms': int(os.environ.get('REPLICA_LAG_MAX_MS', 5000)),
     'replica_lag_max_msgs': int(os.environ.get('REPLICA_LAG_MAX_MSGS', 1000)),
+    'offsets.topic.replication.factor': replication,
     'leader_rebalance': str(os.environ.get('AUTO_LEADER_REBALANCE', 'false').lower() == 'true').lower()
 }
 
 with open(KAFKA_CONFIG_FILE, 'w+') as conf:
     conf.write(KAFKA_CONFIG_TEMPLATE % config_model)
+    if KAFKA_LOG_VERSION:
+        conf.write('log.message.format.version=%s\n' % KAFKA_LOG_VERSION) 
 
 
 # Setup the logging configuration.
