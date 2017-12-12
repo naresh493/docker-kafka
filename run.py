@@ -38,6 +38,7 @@ KAFKA_SERVICE_NAME = os.environ.get('KAFKA_SERVICE', 'kafka')
 
 KAFKA_CONFIG_TEMPLATE = """# Kafka configuration for %(node_name)s
 broker.id=%(broker_id)d
+broker.rack=%(broker_rack)s
 advertised.host.name=%(host_address)s
 port=%(broker_port)d
 
@@ -99,11 +100,17 @@ log4j.appender.R.layout=org.apache.log4j.PatternLayout
 log4j.appender.R.layout.ConversionPattern=%(log_pattern)s
 """
 
+broker_rack = os.environ.get('BROKER_RACK')
+if broker_rack is None:
+    sys.stderr.write('BROKER_RACK environment variable is required!\n')
+    sys.exit(1)
+
 replication = min(int(os.environ.get("REPLICATION", 2)), len(get_node_list(KAFKA_SERVICE_NAME)))
 # Generate the Kafka configuration from the defined environment variables.
 config_model = {
     'node_name': get_container_name(),
     'broker_id': int(os.environ.get('BROKER_ID', 0)),
+    'broker_rack': str(broker_rack),
     'host_address': get_container_host_address(),
     'broker_port': get_port('broker', 9092),
     # Default log directory is /var/lib/kafka/logs.
