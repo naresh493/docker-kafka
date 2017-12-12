@@ -30,6 +30,8 @@ seed the service's configuration:
     for this deployment. Defaults to `/local/kafka`;
   - `BROKER_ID`, which controls the `broker.id` configuration setting
     and useful for multi-node Kafka clusters. Defaults to 0.
+  - `BROKER_RACK`, which controls the `broker.rack` configuration setting
+    and allows rack aware replication assignment for fault tolerance.
   - `<SERVICE_NAME>_<CONTAINER_NAME>_BROKER_PORT`, which controls which
     port the Kafka broker will listen on. Defaults to 9092;
 
